@@ -53,12 +53,18 @@ export default async function Home() {
     return acc
   }, {});
 
+  // Helper to check if a banner is active
+  const isBannerActive = (banner: any) => {
+    if (!banner) return false;
+    return banner.specs?.['Is Active'] !== false;
+  };
+
   return (
     <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-8">
       <HeroBanner slides={slides} />
       <CategoryGrid />
       
-      {settings.show_new_arrivals && newArrivals.length > 0 && (
+      {settings.show_new_arrivals && (newArrivals.length > 0 || isBannerActive(bannersMap['new-arrivals'])) && (
         <ProductGrid 
           title="สินค้าใหม่ล่าสุด" 
           products={newArrivals} 
@@ -67,7 +73,7 @@ export default async function Home() {
         />
       )}
       
-      {settings.show_best_sellers && bestSellers.length > 0 && (
+      {settings.show_best_sellers && (bestSellers.length > 0 || isBannerActive(bannersMap['best-sellers'])) && (
         <ProductGrid 
           title="สินค้าขายดี" 
           products={bestSellers} 
@@ -78,7 +84,7 @@ export default async function Home() {
 
       {/* Category Showcases */}
       {categoryProducts
-        .filter(({ category, products }) => products.length > 0 && settings.visible_categories.includes(category.slug))
+        .filter(({ category, products }) => (products.length > 0 || isBannerActive(bannersMap[category.slug])) && settings.visible_categories.includes(category.slug))
         .map(({ category, products }) => (
           <ProductGrid 
             key={category.slug}
@@ -92,9 +98,9 @@ export default async function Home() {
       {/* Homepage TikTok Video Showcase */}
       <TikTokShowcase videos={tiktokVideos} />
 
-      {(!settings.show_new_arrivals || newArrivals.length === 0) && 
-       (!settings.show_best_sellers || bestSellers.length === 0) && 
-       categoryProducts.filter(({ category, products }) => products.length > 0 && settings.visible_categories.includes(category.slug)).length === 0 && (
+      {(!settings.show_new_arrivals || (newArrivals.length === 0 && !isBannerActive(bannersMap['new-arrivals']))) && 
+       (!settings.show_best_sellers || (bestSellers.length === 0 && !isBannerActive(bannersMap['best-sellers']))) && 
+       categoryProducts.filter(({ category, products }) => (products.length > 0 || isBannerActive(bannersMap[category.slug])) && settings.visible_categories.includes(category.slug)).length === 0 && (
         <div className="text-center py-20">
           <p className="text-slate-500 dark:text-slate-400 text-lg">
             ยังไม่มีส่วนข้อมูลที่จะแสดงผล เพิ่มสินค้าหรือเปิดใช้งานหมวดหมู่ที่ต้องการแสดงผลจากระบบผู้ดูแลระบบ (Admin Panel)
@@ -104,3 +110,4 @@ export default async function Home() {
     </div>
   );
 }
+
