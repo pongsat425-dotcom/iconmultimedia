@@ -7,6 +7,7 @@ interface TikTokVideo {
   id: string
   name: string
   description: string
+  image?: string
   specs?: Record<string, any>
 }
 
@@ -79,11 +80,24 @@ export default function TikTokShowcase({ videos }: TikTokShowcaseProps) {
             <div 
               key={vid.id}
               onClick={() => setActiveVideoId(videoId)}
-              className="group relative bg-slate-900 hover:bg-slate-850 border border-slate-800 hover:border-rose-500/30 rounded-3xl p-6 h-64 flex flex-col justify-between overflow-hidden shadow-sm hover:shadow-xl hover:-translate-y-1.5 transition-all duration-300 cursor-pointer"
+              className="group relative border border-slate-800 hover:border-rose-500/50 rounded-3xl p-6 h-64 flex flex-col justify-between overflow-hidden shadow-sm hover:shadow-xl hover:-translate-y-1.5 transition-all duration-300 cursor-pointer"
             >
-              {/* Animated glow background element */}
-              <div className="absolute -right-8 -top-8 w-24 h-24 bg-rose-500/10 rounded-full blur-2xl group-hover:bg-rose-500/20 transition-all duration-500" />
-              <div className="absolute -left-8 -bottom-8 w-24 h-24 bg-cyan-500/5 rounded-full blur-2xl group-hover:bg-cyan-500/15 transition-all duration-500" />
+              {/* Cover background image or default gradient fallback */}
+              {vid.image && vid.image !== '/placeholder-product.svg' ? (
+                <>
+                  <div 
+                    className="absolute inset-0 bg-cover bg-center transition-transform duration-500 group-hover:scale-105"
+                    style={{ backgroundImage: `url(${vid.image})` }}
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/60 to-slate-950/30" />
+                </>
+              ) : (
+                <>
+                  <div className="absolute inset-0 bg-slate-900 group-hover:bg-slate-850 transition-colors" />
+                  <div className="absolute -right-8 -top-8 w-24 h-24 bg-rose-500/10 rounded-full blur-2xl group-hover:bg-rose-500/20 transition-all duration-500" />
+                  <div className="absolute -left-8 -bottom-8 w-24 h-24 bg-cyan-500/5 rounded-full blur-2xl group-hover:bg-cyan-500/15 transition-all duration-500" />
+                </>
+              )}
 
               {/* Top Row: TikTok style badge */}
               <div className="flex items-center justify-between z-10">

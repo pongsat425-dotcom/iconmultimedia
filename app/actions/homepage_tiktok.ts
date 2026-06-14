@@ -33,6 +33,27 @@ async function resolveTikTokUrl(url: string): Promise<string> {
   return cleanedUrl
 }
 
+async function getTikTokThumbnail(url: string): Promise<string> {
+  try {
+    const res = await fetch(`https://www.tiktok.com/oembed?url=${encodeURIComponent(url)}`, {
+      method: 'GET',
+      headers: {
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+      },
+      next: { revalidate: 86400 } // Cache for 24 hours
+    })
+    if (res.ok) {
+      const data = await res.json()
+      if (data && data.thumbnail_url) {
+        return data.thumbnail_url
+      }
+    }
+  } catch (e) {
+    console.error('Failed to fetch TikTok thumbnail via oEmbed:', e)
+  }
+  return '/placeholder-product.svg'
+}
+
 export async function createTikTokVideo(formData: FormData) {
   const { error: authError } = await requireAdmin()
   if (authError) redirect('/')
@@ -49,6 +70,7 @@ export async function createTikTokVideo(formData: FormData) {
 
   const tiktokUrl = await resolveTikTokUrl(rawTiktokUrl)
   const slug = `homepage-tiktok-${Date.now()}`
+  const image = await getTikTokThumbnail(tiktokUrl)
 
   const { error } = await supabase
     .from('products')
@@ -60,7 +82,7 @@ export async function createTikTokVideo(formData: FormData) {
       category: 'homepage_tiktok',
       stock: 9999,
       in_stock: true,
-      image: '/placeholder-product.svg',
+      image,
       rating: 0,
       reviews: 0,
       specs: {
@@ -94,12 +116,14 @@ export async function updateTikTokVideo(formData: FormData) {
   }
 
   const tiktokUrl = await resolveTikTokUrl(rawTiktokUrl)
+  const image = await getTikTokThumbnail(tiktokUrl)
 
   const { error } = await supabase
     .from('products')
     .update({
       name,
       description,
+      image,
       specs: {
         'TikTok URL': tiktokUrl,
       },

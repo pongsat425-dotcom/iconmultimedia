@@ -23,7 +23,7 @@ export default async function Home() {
     getHeroSlides(),
     supabase
       .from('products')
-      .select('id, name, description, specs')
+      .select('id, name, description, image, specs')
       .eq('category', 'homepage_tiktok')
       .order('created_at', { ascending: true }),
     supabase
