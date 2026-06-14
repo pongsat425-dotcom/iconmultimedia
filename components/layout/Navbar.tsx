@@ -92,13 +92,13 @@ export default function Navbar() {
           <div className="hidden flex-1 md:flex items-center gap-6 max-w-2xl px-4">
             <form onSubmit={handleSearch} className="relative flex-1 flex items-center">
               <div className="absolute inset-y-0 left-0 flex items-center pl-3.5 pointer-events-none">
-                <Search className="h-4.5 w-4.5 text-slate-400" />
+                <Search className="h-4.5 w-4.5 text-slate-500" />
               </div>
               <input 
                 type="text"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="block w-full pl-10 pr-3 py-2 border border-slate-300 dark:border-slate-700 rounded-l-xl leading-5 bg-slate-50 dark:bg-slate-950 placeholder-slate-450 dark:placeholder-slate-500 focus:outline-none focus:ring-1 focus:ring-primary/50 focus:border-primary/50 sm:text-sm transition-all text-slate-900 dark:text-white" 
+                className="block w-full pl-10 pr-3 py-2 border border-slate-350 dark:border-slate-700 rounded-l-xl leading-5 bg-slate-50 dark:bg-slate-950 placeholder-slate-500 dark:placeholder-slate-400 focus:outline-none focus:ring-1 focus:ring-primary/50 focus:border-primary/50 sm:text-sm transition-all text-slate-900 dark:text-white" 
                 placeholder="ค้นหาสินค้า แบรนด์ หรือหมวดหมู่..." 
               />
               <button type="submit" className="bg-gradient-to-r from-primary to-primary-600 hover:from-primary-600 hover:to-primary-700 text-white px-5 py-2.5 rounded-r-xl text-xs font-bold transition-all shadow-md shadow-primary/10 select-none cursor-pointer">
@@ -107,7 +107,7 @@ export default function Navbar() {
             </form>
             
             <div className="relative group">
-              <button className="flex items-center gap-1.5 text-sm font-semibold text-slate-700 dark:text-slate-200 hover:text-primary transition-colors cursor-pointer select-none">
+              <button className="flex items-center gap-1.5 text-sm font-bold text-slate-850 dark:text-slate-100 hover:text-primary transition-colors cursor-pointer select-none">
                 หมวดหมู่สินค้า <ChevronDown className="h-4 w-4" />
               </button>
               {/* Dropdown */}
@@ -117,7 +117,7 @@ export default function Navbar() {
                     <Link
                       key={cat.slug}
                       href={`/category/${cat.slug}`}
-                      className="block px-3.5 py-2 text-xs font-semibold rounded-lg text-slate-700 dark:text-slate-200 hover:bg-primary/10 hover:text-primary dark:hover:bg-primary/20 dark:hover:text-primary transition-all"
+                      className="block px-3.5 py-2 text-xs font-bold rounded-lg text-slate-800 dark:text-slate-100 hover:bg-primary/10 hover:text-primary dark:hover:bg-primary/20 dark:hover:text-primary transition-all"
                     >
                       {cat.name}
                     </Link>
@@ -125,7 +125,7 @@ export default function Navbar() {
                 </div>
               </div>
             </div>
-            <Link href="/repairs" className="text-sm font-semibold text-slate-700 dark:text-slate-200 hover:text-primary transition-colors">
+            <Link href="/repairs" className="text-sm font-bold text-slate-850 dark:text-slate-100 hover:text-primary transition-colors">
               บริการซ่อม
             </Link>
           </div>
@@ -166,7 +166,7 @@ export default function Navbar() {
                   <button 
                     onClick={() => setUserDropdownOpen(!userDropdownOpen)}
                     onBlur={() => setTimeout(() => setUserDropdownOpen(false), 200)}
-                    className="flex items-center gap-2 px-3 py-1.5 rounded-md text-sm font-medium text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors border border-slate-200 dark:border-slate-700"
+                    className="flex items-center gap-2 px-3 py-1.5 rounded-md text-sm font-bold text-slate-850 dark:text-slate-100 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors border border-slate-300 dark:border-slate-700"
                   >
                     <div className="w-7 h-7 bg-primary/20 text-primary rounded-full flex items-center justify-center">
                       <User className="h-4 w-4" />
