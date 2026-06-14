@@ -1,0 +1,116 @@
+main update
+Project Summary
+implementation Plan
+1. ภาพรวมและโครงสร้างสถาปัตยกรรม (Architectural Overview)
+โปรเจกต์นี้พัฒนาขึ้นโดยใช้เทคโนโลยีหลักดังนี้:
+
+Frontend: Next.js 15+ (App Router) ร่วมกับ React 19 และ Tailwind CSS
+Backend & Database: Supabase (ใช้ตาราง users, products, และ orders)
+Authentication & SSR: @supabase/ssr สำหรับการทำ Server-Side Auth และตรวจสอบสิทธิ์
+State Management: Context API สำหรับระบบตะกร้าสินค้า (Cart Context) และระบบแจ้งเตือน (Toast Context)
+2. รายละเอียดแยกตามส่วนประกอบหลัก (Detailed Module Breakdown)
+📁 1. ระบบ Authentication & บทบาทผู้ใช้งาน (User & Auth Module)
+ตั้งอยู่ที่ 
+
+lib/supabase/auth-context.tsx
+ และ 
+
+utils/supabase/
+
+การเชื่อมต่อ Supabase:
+
+
+client.ts
+ ใช้ createBrowserClient สำหรับเรียกใช้งานจากฝั่ง Client (React Components)
+
+
+server.ts
+ ใช้ createServerClient ร่วมกับ next/headers (Cookies) สำหรับฝั่ง Server (Server Components / API Routes) เพื่อความปลอดภัย
+AuthContext (AuthProvider):
+คอยดักจับสถานะเข้าสู่ระบบผ่าน supabase.auth.onAuthStateChange
+มีฟังก์ชัน fetchRole เพื่ออ่านข้อมูลบทบาทผู้ใช้งาน (role: 'admin' | 'user') จากตาราง users ในฐานข้อมูล Supabase เพื่อนำมากำหนดระดับสิทธิ์การเข้าถึงหน้าจัดการ Admin Dashboard
+📁 2. ระบบตะกร้าสินค้าและการแจ้งเตือน (State Contexts)
+ตั้งอยู่ที่ lib/cart/ และ lib/toast/
+
+Cart Context: เก็บข้อมูลสินค้าที่อยู่ในตะกร้า เช่น จำนวนสินค้า ผลรวมราคาทั้งหมด โดยแชร์ข้อมูลข้ามหน้าต่างๆ (เช่น Navbar, Cart Page, Product Detail)
+Toast Context: ระบบแสดงผลป๊อปอัปแจ้งเตือนสั้นๆ (เช่น "เพิ่มสินค้าลงตะกร้าสำเร็จ" หรือข้อความแจ้งเตือนต่างๆ)
+📁 3. ส่วนหน้าเว็บบริการลูกค้า (Storefront Pages)
+หน้าหลัก (Homepage) 
+
+app/page.tsx
+:
+
+แสดงแบนเนอร์โปรโมท (HeroBanner)
+แสดงการจัดหมวดหมู่สินค้าหลัก (CategoryGrid)
+แสดงรายการสินค้าใหม่ (New Arrivals) และสินค้าขายดี (Best Sellers) ในตอนนี้โค้ดในหน้านี้ยังเชื่อมกับข้อมูลจำลอง (Mock Data) เป็นหลัก
+หน้าร้านค้าทั้งหมด (Shop) 
+
+app/shop/page.tsx
+:
+
+เป็นหน้าที่มีการค้นหา (Search Query) คัดกรองประเภทสินค้า (Category Filter) การเลือกสินค้าเฉพาะที่มีในสต็อก (In Stock Only) และระบบเรียงลำดับราคา/คะแนน/ยอดขาย
+อ่านค่าฟิลเตอร์เริ่มต้นจาก URL Query parameters เช่น ?q=...&category=... เพื่อให้ลิงก์จากหน้าอื่นๆ ค้นหาต่อได้ทันที
+หน้าแสดงตามหมวดหมู่ 
+
+app/category/[slug]/page.tsx
+:
+
+แสดงสินค้าแยกตามหมวดหมู่ที่คลิก (laptops, desktops, components, accessories, external-devices, printers)
+หน้ารายละเอียดสินค้า 
+
+app/product/[id]/page.tsx
+:
+
+แสดงรายละเอียดเชิงลึก ข้อมูลสเปกสินค้าเป็นตาราง, คำนวณเปอร์เซ็นต์ส่วนลดเทียบกับราคาตั้งต้น
+มีระบบเลือกจำนวนสินค้าก่อนกด "Add to Cart" และแนะนำสินค้าประเภทเดียวกันด้านล่าง
+📁 4. การแสดงผลการ์ดสินค้า (ProductCard Component)
+ตั้งอยู่ที่ 
+
+components/home/ProductCard.tsx
+
+การอัปเดตล่าสุดโดยผู้ใช้งาน:
+เปลี่ยนจากการแสดงสีพื้นหลังว่างๆ (Placeholder) มาเป็นการดึงภาพจริงโดยใช้ <Image> Component ของ Next.js
+เพิ่มการตั้งค่า sizes และ className="object-contain" เพื่อให้ภาพจัดสเกลสวยงาม ไม่เบี้ยว และโหลดอย่างรวดเร็ว (Responsive Image optimization)
+📁 5. ระบบหลังบ้านแอดมิน (Admin Control Panel)
+ตั้งอยู่ที่ 
+
+app/admin/
+
+AdminLayout 
+
+layout.tsx
+:
+ออกแบบหน้าตา Sidebar ให้ดูพรีเมียม (สีเขียว Emerald โหมดดาร์กและไลท์)
+เป็นศูนย์รวมเมนูจัดการ: Overview, Products, Orders, Customers
+Overview Dashboard 
+
+page.tsx
+:
+ดึงข้อมูลจริงจาก Supabase DB: ใช้คำสั่ง Promise.all ยิงสืบค้นจำนวนแถวข้อมูลจากตาราง products, orders, users และคำนวณยอดขายสะสม (Total Revenue) เฉพาะออเดอร์ที่จัดส่งสำเร็จ (status = 'completed') แบบ Real-time
+การจัดการส่วนอื่นๆ:
+
+
+orders/page.tsx
+: แสดงรายการคำสั่งซื้อของลูกค้าทั้งหมด สามารถเปลี่ยนสถานะการจัดส่งได้ผ่าน StatusSelect
+
+
+products/new/page.tsx
+: แบบฟอร์มเพิ่มรายการสินค้าใหม่เข้าสู่ฐานข้อมูล
+📁 6. สคริปต์สำหรับการจัดการ (Scripts Module)
+ตั้งอยู่ที่ 
+
+scripts/
+
+
+
+seed-products.ts
+: สคริปต์สำหรับนำเข้าข้อมูลสินค้าจาก MOCK_PRODUCTS เข้าสู่ตาราง products บน Supabase โดยตรงโดยใช้ Service Role Key เพื่อข้ามกฎความปลอดภัย (RLS)
+
+
+set-admin-temp.ts
+ (สคริปต์ที่แอดเพิ่มขึ้นมาใหม่):
+เขียนขึ้นมาเพื่ออัปเกรดอีเมลผู้ใช้ pongsat425@gmail.com ให้ได้รับบทบาท admin ในตาราง users ทันทีผ่าน API ของ Supabase และสั่งปิดการเชื่อมต่อโดยใช้ process.exit(0) เพื่อแก้ปัญหาเทอร์มินัลค้าง
+3. สิ่งที่ควรดำเนินการต่อในเฟสถัดไป
+เชื่อมข้อมูลหน้าลูกค้าหลักกับ Supabase: เปลี่ยนการ import { MOCK_PRODUCTS } ในหน้า Home, Shop และ Product detail ให้เป็นการดึงข้อมูลจริงผ่าน API Supabase เสมือนหน้า Admin
+เชื่อมต่อแถบค้นหาใน Navbar: อัปเดตช่อง Search ใน Navbar ให้ลิงก์ส่งคำค้นหาไปยังหน้า /shop?q=...
+จัดการรูปภาพจริงของสินค้า: อัปเดตตารางฐานข้อมูลและ Image Path ในระบบให้ชี้ไปยังโฟลเดอร์ /public/products/ ที่มีภาพจริงอยู่ทั้งหมด
