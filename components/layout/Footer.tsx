@@ -128,7 +128,7 @@ export default function Footer() {
               </li>
               <li className="flex items-center gap-3">
                 <Clock className="h-4 w-4 text-primary-500 shrink-0" />
-                <span>เปิดบริการทุกวัน 10:00 - 20:00 น.</span>
+                <span>เปิดบริการทุกวัน 9:00 - 19:00 น.</span>
               </li>
             </ul>
           </div>
