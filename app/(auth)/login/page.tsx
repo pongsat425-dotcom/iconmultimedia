@@ -80,9 +80,14 @@ function LoginForm() {
             />
           </div>
           <div>
-            <label htmlFor="password" className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">
-              รหัสผ่าน (Password)
-            </label>
+            <div className="flex justify-between items-center mb-1">
+              <label htmlFor="password" className="block text-sm font-medium text-slate-700 dark:text-slate-300">
+                รหัสผ่าน (Password)
+              </label>
+              <Link href="/forgot-password" className="text-xs font-medium text-emerald-605 hover:text-emerald-500 dark:text-emerald-500 dark:hover:text-emerald-400 cursor-pointer">
+                ลืมรหัสผ่าน?
+              </Link>
+            </div>
             <input
               id="password"
               name="password"
