@@ -19,6 +19,8 @@ export default function Navbar() {
   const router = useRouter();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [userDropdownOpen, setUserDropdownOpen] = useState(false);
+  const [categoriesDropdownOpen, setCategoriesDropdownOpen] = useState(false);
+  const [mobileCategoriesOpen, setMobileCategoriesOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [logoSrc, setLogoSrc] = useState('/logo.png');
   const [logoWidth, setLogoWidth] = useState(160);
@@ -107,17 +109,26 @@ export default function Navbar() {
             </form>
             
             <div className="relative group">
-              <button className="flex items-center gap-1.5 text-sm font-bold text-slate-850 dark:text-slate-100 hover:text-primary transition-colors cursor-pointer select-none">
-                หมวดหมู่สินค้า <ChevronDown className="h-4 w-4" />
+              <button 
+                onClick={() => setCategoriesDropdownOpen(!categoriesDropdownOpen)}
+                onBlur={() => setTimeout(() => setCategoriesDropdownOpen(false), 200)}
+                className="flex items-center gap-1.5 text-sm font-bold text-slate-850 dark:text-slate-100 hover:text-primary transition-colors cursor-pointer select-none"
+              >
+                หมวดหมู่สินค้า <ChevronDown className={`h-4 w-4 transition-transform duration-200 ${categoriesDropdownOpen ? 'rotate-180' : ''}`} />
               </button>
               {/* Dropdown */}
-              <div className="absolute top-full left-0 mt-2.5 w-52 max-h-[400px] overflow-y-auto bg-white/95 dark:bg-slate-900/95 backdrop-blur-md rounded-xl shadow-xl border border-slate-200/50 dark:border-slate-800/50 opacity-0 invisible group-hover:opacity-100 group-hover:visible translate-y-2 group-hover:translate-y-0 transition-all duration-200 ease-out z-50">
+              <div className={`absolute top-full left-0 mt-2.5 w-52 max-h-[400px] overflow-y-auto bg-white/95 dark:bg-slate-900/95 backdrop-blur-md rounded-xl shadow-xl border border-slate-200/50 dark:border-slate-800/50 transition-all duration-200 ease-out z-50 ${
+                categoriesDropdownOpen 
+                  ? 'opacity-100 visible translate-y-0' 
+                  : 'opacity-0 invisible translate-y-2 group-hover:opacity-100 group-hover:visible group-hover:translate-y-0'
+              }`}>
                 <div className="py-2 px-1">
                   {CATEGORY_LIST.map((cat) => (
                     <Link
                       key={cat.slug}
                       href={`/category/${cat.slug}`}
                       className="block px-3.5 py-2 text-xs font-bold rounded-lg text-slate-800 dark:text-slate-100 hover:bg-primary/10 hover:text-primary dark:hover:bg-primary/20 dark:hover:text-primary transition-all"
+                      onClick={() => setCategoriesDropdownOpen(false)}
                     >
                       {cat.name}
                     </Link>
@@ -275,16 +286,33 @@ export default function Navbar() {
         {mobileMenuOpen && (
           <div className="md:hidden border-t border-slate-200 dark:border-slate-800 pb-4 animate-fade-in">
             <nav className="py-2 space-y-1 max-h-[40vh] overflow-y-auto">
-              {CATEGORY_LIST.map((cat) => (
-                <Link
-                  key={cat.slug}
-                  href={`/category/${cat.slug}`}
-                  className="block px-4 py-2 text-sm font-semibold text-slate-850 dark:text-slate-100 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-md"
-                  onClick={() => setMobileMenuOpen(false)}
+              {/* Product Categories Accordion */}
+              <div>
+                <button 
+                  onClick={() => setMobileCategoriesOpen(!mobileCategoriesOpen)}
+                  className="flex w-full items-center justify-between px-4 py-2 text-sm font-bold text-slate-850 dark:text-slate-100 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-md text-left cursor-pointer"
                 >
-                  {cat.name}
-                </Link>
-              ))}
+                  <span>หมวดหมู่สินค้า</span>
+                  <ChevronDown className={`h-4 w-4 transition-transform duration-200 ${mobileCategoriesOpen ? 'rotate-180' : ''}`} />
+                </button>
+                {mobileCategoriesOpen && (
+                  <div className="pl-4 space-y-1 mt-1 border-l-2 border-primary/20 ml-6">
+                    {CATEGORY_LIST.map((cat) => (
+                      <Link
+                        key={cat.slug}
+                        href={`/category/${cat.slug}`}
+                        className="block px-4 py-1.5 text-xs font-semibold text-slate-750 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-md"
+                        onClick={() => {
+                          setMobileMenuOpen(false);
+                          setMobileCategoriesOpen(false);
+                        }}
+                      >
+                        {cat.name}
+                      </Link>
+                    ))}
+                  </div>
+                )}
+              </div>
               <Link href="/repairs" className="block px-4 py-2 text-sm font-semibold text-slate-850 dark:text-slate-100 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-md" onClick={() => setMobileMenuOpen(false)}>บริการซ่อม</Link>
               <Link href="/contact" className="block px-4 py-2 text-sm font-bold text-primary hover:bg-slate-100 dark:hover:bg-slate-800 rounded-md" onClick={() => setMobileMenuOpen(false)}>ติดต่อผู้ขาย</Link>
             </nav>
